@@ -1,0 +1,27 @@
+{{ header }}
+<div id="checkout-checkout" class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+      <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  <div class="row">{{ column_left }}
+    <div id="content" class="col">{{ content_top }}
+      <div class="row">
+      
+          <div class="col-md-7 mb-3">
+              <div id="checkout-register">{{ register }}</div>
+            {% if shipping_address %}
+              <div id="checkout-shipping-address">{{ shipping_address }}</div>
+            {% endif %}
+          </div>
+        <div class="col">
+          <div id="checkout-confirm">{{ confirm }}</div>
+        </div>
+      </div>
+    </div>
+    {{ content_bottom }}
+  </div>
+  {{ column_right }}
+</div>
+{{ footer }}

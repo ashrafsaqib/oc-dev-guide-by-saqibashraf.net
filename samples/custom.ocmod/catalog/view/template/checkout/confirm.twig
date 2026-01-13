@@ -1,0 +1,234 @@
+<div class="table-responsive mb-4">
+  <!-- Dropdown -->
+  <div class="form-group mb-3">
+    <label for="select-controller" class="form-label">Select Controller</label>
+    <select name="select_controller" id="select-controller" class="form-select">
+      <option value="">-- Controller --</option>
+      {% for data in checkout_data %}
+      <option value="{{ data.name }}">{{ data.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- BU / Allocation Table -->
+  <table class="table table-bordered table-hover" id="bu-allocation-table">
+    <thead>
+      <tr>
+        <th>BU</th>
+        <th>Allocation %</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" name="bu[]" class="form-control" placeholder="Enter BU"></td>
+        <td><input type="text" name="allocation[]" class="form-control" value="100"></td>
+        <td><button class="delBtn btn"><i class="fa-solid fa-trash"></i></button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Add BU button -->
+  <button type="button" class="btn btn-sm btn-success" id="add-bu-btn">Add Additional BUs</button>
+</div>
+
+<div class="mb-3">
+  <label for="shipping-date" class="form-label">Confirm Delivery Date</label>
+  <input type="date" id="shipping-date" name="shipping_date" class="form-control">
+  <div id="quick-shipping-msg" class="text-danger mt-2" style="display:none;">All orders requested sooner than 14 days may be subject to an expedited shipping charge</div>
+</div>
+
+<div class="mb-3">
+  <label for="input-comment" class="form-label">Add Comments About Your Order</label>
+  <textarea name="comment" rows="5" id="input-comment" class="form-control"></textarea>
+</div>
+
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>{{ column_product }}</th>
+      <th class="text-end">{{ column_total }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+    <tr>
+      <td>{{ product.quantity }}x <a href="{{ product.href }}">{{ product.name }}</a>
+
+        <ul class="list-unstyled mb-0">
+          <li>
+            <small> - {{ text_model }}: {{ product.model }}</small>
+          </li>
+          {% for option in product.option %}
+          <li>
+            <small> - {{ option.name }}: {{ option.value }}</small>
+          </li>
+          {% endfor %}
+
+          {% if product.subscription %}
+          <li>
+            <small> - {{ text_subscription }}: {{ product.subscription }}</small>
+          </li>
+          {% endif %}
+
+          {% if product.reward %}
+          <li>
+            <small> - {{ text_points }}: {{ product.reward }}</small>
+          </li>
+          {% endif %}
+        </ul>
+
+      </td>
+      <td class="text-end">{{ product.total }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    {% for total in totals %}
+    <tr>
+      <td class="text-end"><strong>{{ total.title }}</strong></td>
+      <td class="text-end">{{ total.text }}</td>
+    </tr>
+    {% endfor %}
+  </tfoot>
+</table>
+</div>
+<div id="checkout-payment">
+  {% if payment %}
+  {{ payment }}
+  {% else %}
+  <div class="text-end"><button type="button" onclick="saveOrder()" id="default-confirm" class="btn btn-primary">{{ button_confirm }}</button></div>
+  {% endif %}
+</div>
+<script>
+  // set default date to today + 14 days
+  const shippingDateInput = document.getElementById('shipping-date');
+  const today = new Date();
+  today.setDate(today.getDate() + 14);
+  const yyyy = today.getFullYear();
+  let mm = today.getMonth() + 1; // Months start at 0!
+  let dd = today.getDate();
+  if (mm < 10) mm = '0' + mm;
+  if (dd < 10) dd = '0' + dd;
+  const minDate = yyyy + '-' + mm + '-' + dd;
+  shippingDateInput.value = minDate;
+  document.getElementById('add-bu-btn').addEventListener('click', function() {
+    const tableBody = document.querySelector('#bu-allocation-table tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+    <td><input type="text" name="bu[]" class="form-control" placeholder="Enter BU"></td>
+    <td><input type="text" name="allocation[]" class="form-control" placeholder="Enter allocation"></td>
+    <td><button class="delBtn btn"><i class="fa-solid fa-trash"></i></button></td>
+  `;
+    tableBody.appendChild(newRow);
+  });
+
+  // delete row functionality
+  document.querySelector('.delBtn').addEventListener('click', function(e) {
+    const row = e.target.closest('tr');
+    if (row) {
+      row.remove();
+    }
+  });
+
+  document.getElementById('shipping-date').addEventListener('change', function() {
+    const msg = document.getElementById('quick-shipping-msg');
+    const selectedDate = new Date(this.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() + 14);
+
+    if (this.value && selectedDate < minDate) {
+      msg.style.display = 'block';
+    } else {
+      msg.style.display = 'none';
+    }
+  });
+
+  function saveOrder() {
+    // disable button to prevent multiple clicks
+    var validationFailed = false;
+    var firstInvalidElement = null;
+    var checkedRadioGroups = {};
+
+    // General validation for required fields
+    $('#content input').each(function() {
+      var field = $(this);
+      if ($.trim(field.val()) === '') {
+        firstInvalidElement = field;
+        validationFailed = true;
+
+      }
+    });
+
+    // validate date shouldn't be old date
+    var shippingDate = $('#shipping-date').val();
+    if (shippingDate) {
+      var selectedDate = new Date(shippingDate);
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      var minDate = new Date(today);
+      minDate.setDate(today.getDate());
+      if (selectedDate < minDate) {
+        firstInvalidElement = $('#shipping-date');
+        validationFailed = true;
+        alert('Add a valid shipping date');
+        return;
+      }
+    }
+
+    if (validationFailed) {
+      alert('Please fill out all required fields.');
+      firstInvalidElement.focus();
+      return;
+    }
+
+    var allocationInputs = $('input[name="allocation[]"]');
+
+    if (allocationInputs.length > 0) {
+      var totalAllocation = 0;
+      allocationInputs.each(function() {
+        var value = parseFloat($(this).val());
+        if (!isNaN(value)) {
+          totalAllocation += value;
+        }
+      });
+
+      if (Math.round(totalAllocation) !== 100) {
+        alert('Allocation should sum to 100');
+        return;
+      }
+    }
+
+    $.ajax({
+      url: 'index.php?route=extension/custom/module/confirm.saveOrder&language={{ language }}',
+      type: 'post',
+      data: $('#form-register').serialize() +
+        '&custom=' + $('#select-option').val() +
+        '&address_id=' + $('#input-shipping-address').val() +
+        '&' + $('#form-shipping-address').serialize() +
+        '&selected_controller=' + $('#select-controller').val() +
+        '&' + $('input[name="bu[]"]').serialize() +
+        '&' + $('input[name="allocation[]"]').serialize() +
+        '&comment=' + encodeURIComponent($('#input-comment').val()) + '&shipping_date=' + $('#shipping-date').val(),
+      beforeSend: function() {
+        $('#default-confirm').prop('disabled', true).text('Processing...');
+      },
+      success: function(json) {
+        // redirect to the success page
+        if (json.redirect) {
+          window.location.href = json.redirect;
+
+        }
+        //$('#checkout-confirm').html(html);
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      },
+      complete: function() {
+        $('#default-confirm').prop('disabled', false).text('{{ button_confirm }}');
+      }
+    });
+  }
+</script>

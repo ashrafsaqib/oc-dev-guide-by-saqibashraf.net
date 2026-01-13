@@ -1,0 +1,42 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-end">
+        <button type="submit" form="form-module" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-save"></i></button>
+        <a href="{{ refresh }}" data-bs-toggle="tooltip" title="{{ button_refresh }}" class="btn btn-light">{{ button_refresh }}</a>
+
+        <a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+      <div class="card-body">
+        <form id="form-module" action="{{ save }}" method="post" data-oc-toggle="ajax">
+
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">{{ text_token_label }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="module_customcheckout_token" value="{{ module_customcheckout_token }}" placeholder="{{ text_token_label }}" id="input-token" class="form-control"/>
+              <small class="form-text">{{ help_token }}</small>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">{{ text_groupid_label }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="module_customcheckout_groupid" value="{{ module_customcheckout_groupid }}" placeholder="{{ text_groupid_label }}" id="input-groupid" class="form-control"/>
+              <small class="form-text">{{ help_groupid }}</small>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Example Plugin</name>
+    <description>Example Plugin.</description>
+    <code>examplexml</code>
+    <version>1.0</version>
+    <author>Saqib Ashraf</author>
+    <link>http://www.saqibashraf.net</link>
+    <!-- Controller Test -->
+  <file path="catalog/controller/*/*.php">
+        <operation>
+            <search>
+                <![CDATA[$data['footer'] = $this->load->controller('common/footer');]]>
+            </search>
+            <add position="replace">
+                <![CDATA[
+                $data['footer'] = $this->load->controller('extension/custom/module/footer');
+               ]]>
+            </add>
+        </operation>
+
+             <operation>
+            <search>
+                <![CDATA[$data['header'] = $this->load->controller('common/header');]]>
+            </search>
+            <add position="replace">
+                <![CDATA[
+                $data['header'] = $this->load->controller('extension/custom/module/header');
+               ]]>
+            </add>
+        </operation>
+       
+    </file>
+
+         <file path="catalog/controller/checkout/checkout.php">
+
+         
+          <operation>
+            <search>
+                <![CDATA[$data['register'] = $this->load->controller('checkout/register');]]>
+            </search>
+            <add position="replace">
+                <![CDATA[
+                $data['register'] = $this->load->controller('extension/custom/module/register');
+               ]]>
+            </add>
+        </operation>
+
+
+          <operation>
+            <search>
+                <![CDATA[$data['confirm'] = $this->load->controller('checkout/confirm');]]>
+            </search>
+            <add position="replace">
+                <![CDATA[
+                $data['confirm'] = $this->load->controller('extension/custom/module/confirm');
+               ]]>
+            </add>
+        </operation>
+
+
+        
+        <operation>
+            <search>
+                <![CDATA[$this->response->setOutput($this->load->view('checkout/checkout', $data));]]>
+            </search>
+            <add position="replace">
+                <![CDATA[
+                $this->response->setOutput($this->load->view('extension/custom/module/checkout', $data));
+               ]]>
+            </add>
+        </operation>
+       
+    </file>
+
+
+         <file path="catalog/controller/checkout/shipping_address.php">
+        <operation>
+            <search>
+                <![CDATA[return $this->load->view('checkout/shipping_address', $data);]]>
+            </search>
+            <add position="replace">
+                <![CDATA[
+                return $this->load->view('extension/custom/checkout/shipping_address', $data);
+               ]]>
+            </add>
+        </operation>
+       
+    </file>
+    
+</modification>
