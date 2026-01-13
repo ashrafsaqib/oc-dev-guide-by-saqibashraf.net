@@ -18,12 +18,13 @@ This guide aims to:
 ## Contents
 
 - [Modifying Controllers functions with Events Opencart 4](Modifying%20Controllers%20functions%20with%20Events%20Opencart%204.MD) - Learn how to use OpenCart 4's event system to intercept and modify controller responses without touching core files
+- [Theme Development Guide](Theme%20DEVELOPMENT%20GUIDE.md) - Best practices for theme development using events instead of controller overrides, with real-world examples from OC Ultra theme
 
 ## Topics Covered
 
 - ✅ Event System Architecture
 - 🔄 Extension Development (Coming Soon)
-- 🔄 Theme Development (Coming Soon)
+- ✅ Theme Development
 - 🔄 Plugin Development (Coming Soon)
 - 🔄 Bug Fixes & Solutions (Coming Soon)
 - 🔄 Migration from OpenCart 3 (Coming Soon)
